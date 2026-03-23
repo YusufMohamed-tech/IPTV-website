@@ -130,6 +130,22 @@ Services:
 - Backend API: `http://localhost:5000/api`
 - MongoDB: `mongodb://localhost:27017`
 
+## Vercel Deployment (Frontend)
+
+This repository is a monorepo. Deploy only the `frontend` app on Vercel:
+
+1. Import this GitHub repository in Vercel.
+2. Set **Root Directory** to `frontend`.
+3. Framework preset: `Vite`.
+4. Build command: `npm run build`.
+5. Output directory: `dist`.
+6. Add env variable:
+	- `VITE_API_URL=https://your-backend-domain/api`
+
+`frontend/vercel.json` already includes SPA rewrites.
+
+Note: The Express API (`backend`) is not deployed by this Vercel frontend config. Deploy backend separately (Render/Railway/VM/Docker host), then point `VITE_API_URL` to it.
+
 ## Main API Routes
 
 ### Auth
