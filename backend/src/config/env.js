@@ -9,6 +9,10 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default("7d"),
   FRONTEND_URL: z.string().url().optional(),
   FRONTEND_URLS: z.string().optional(),
+  FRONTEND_ALLOW_VERCEL_PREVIEWS: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
   ADMIN_EMAIL: z.string().email().optional(),
   ADMIN_PASSWORD: z.string().min(8).optional()
 });

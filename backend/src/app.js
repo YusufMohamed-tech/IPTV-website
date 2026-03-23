@@ -27,6 +27,19 @@ const authLimiter = rateLimit({
   message: { message: "Too many authentication attempts. Please try again later." }
 });
 
+const isAllowedVercelPreview = (origin) => {
+  if (!env.FRONTEND_ALLOW_VERCEL_PREVIEWS) {
+    return false;
+  }
+
+  try {
+    const url = new URL(origin);
+    return url.hostname.endsWith(".vercel.app");
+  } catch {
+    return false;
+  }
+};
+
 const corsOptions = {
   credentials: true,
   origin: (origin, callback) => {
@@ -35,6 +48,10 @@ const corsOptions = {
     }
 
     if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    if (isAllowedVercelPreview(origin)) {
       return callback(null, true);
     }
 
