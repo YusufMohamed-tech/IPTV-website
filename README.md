@@ -182,6 +182,23 @@ This repo includes `render.yaml` at project root.
 - Confirm CORS allows only your production domains.
 - Enable database backups and IP restrictions if possible.
 
+## Auto Deploy After Each Commit (Server Timer)
+
+Server-side auto deploy is available using:
+- `ops/iptv-autodeploy.sh`
+- `ops/iptv-autodeploy.service`
+- `ops/iptv-autodeploy.timer`
+
+It checks `origin/main` every minute and deploys only when a new commit appears.
+
+Useful commands on server:
+
+```bash
+systemctl status iptv-autodeploy.timer
+systemctl start iptv-autodeploy.service
+journalctl -u iptv-autodeploy.service -n 100 --no-pager
+```
+
 ## Main API Routes
 
 ### Auth
