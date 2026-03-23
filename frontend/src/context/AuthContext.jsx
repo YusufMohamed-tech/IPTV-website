@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import http from "../api/http";
 
 const AuthContext = createContext(null);
-const disableSignIn = import.meta.env.VITE_DISABLE_SIGNIN === "true";
 const autoLoginEmail = import.meta.env.VITE_AUTO_LOGIN_EMAIL || "yusufmohamedyak55@gmail.com";
 const autoLoginPassword = import.meta.env.VITE_AUTO_LOGIN_PASSWORD || "yusuf@55555";
 
@@ -40,12 +39,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (disableSignIn) {
-      autoLogin();
-      return;
-    }
-
-    fetchMe();
+    autoLogin();
   }, []);
 
   const login = async (payload) => {
@@ -56,12 +50,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    if (disableSignIn) {
-      return;
-    }
-
-    localStorage.removeItem("token");
-    setUser(null);
+    // Sign-in is intentionally disabled for now, so logout is also a no-op.
   };
 
   const value = useMemo(() => ({ user, loading, login, logout, refresh: fetchMe }), [user, loading]);

@@ -1,10 +1,9 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const AppLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const items =
     user?.role === "admin"
@@ -29,16 +28,6 @@ const AppLayout = ({ children }) => {
             </Link>
           ))}
         </nav>
-        <button
-          className="ghost"
-          onClick={() => {
-            logout();
-            navigate("/login");
-          }}
-          type="button"
-        >
-          Logout
-        </button>
       </aside>
       <main className="content">{children}</main>
     </div>
