@@ -1,17 +1,26 @@
-import dotenv from "dotenv";
 import app from "./app.js";
 import connectDb from "./config/db.js";
+import { env } from "./config/env.js";
 
-dotenv.config();
-
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT;
 
 const startServer = async () => {
   await connectDb();
 
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`API listening on port ${PORT}`);
   });
+
+  const shutdown = (signal) => {
+    console.log(`${signal} received. Closing server...`);
+    server.close(() => {
+      console.log("HTTP server closed");
+      process.exit(0);
+    });
+  };
+
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 };
 
 startServer().catch((error) => {

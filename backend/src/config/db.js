@@ -1,14 +1,11 @@
 import mongoose from "mongoose";
+import { env } from "./env.js";
 
 const connectDb = async () => {
-  const uri = process.env.MONGODB_URI;
-
-  if (!uri) {
-    throw new Error("MONGODB_URI is missing from environment variables");
-  }
-
   mongoose.set("strictQuery", true);
-  await mongoose.connect(uri);
+  await mongoose.connect(env.MONGODB_URI, {
+    autoIndex: env.NODE_ENV !== "production"
+  });
   console.log("MongoDB connected");
 };
 

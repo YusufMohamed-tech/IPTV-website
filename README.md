@@ -146,6 +146,42 @@ This repository is a monorepo. Deploy only the `frontend` app on Vercel:
 
 Note: The Express API (`backend`) is not deployed by this Vercel frontend config. Deploy backend separately (Render/Railway/VM/Docker host), then point `VITE_API_URL` to it.
 
+## Production Deployment (Recommended)
+
+Deploy frontend on Vercel and backend on Render.
+
+### 1) Deploy Backend on Render
+
+This repo includes `render.yaml` at project root.
+
+1. In Render: **New +** -> **Blueprint** -> connect this repository.
+2. Render creates service `iptv-reseller-api` from `backend`.
+3. Set required secrets in Render environment:
+	- `MONGODB_URI`
+	- `JWT_SECRET` (minimum 24 chars)
+	- `FRONTEND_URL` (your Vercel production URL)
+	- `FRONTEND_URLS` (comma-separated allowed origins if needed)
+	- `ADMIN_EMAIL`
+	- `ADMIN_PASSWORD`
+4. After first deploy, run one-time seed command in Render shell:
+	- `npm run seed-admin`
+
+### 2) Deploy Frontend on Vercel
+
+1. Import same GitHub repository in Vercel.
+2. Keep root directory as repository root (already supported by root `vercel.json`).
+3. Add env variable:
+	- `VITE_API_URL=https://<your-render-backend-domain>/api`
+4. Redeploy.
+
+### 3) Go Live Checklist
+
+- Use strong secret values and rotate defaults.
+- Confirm `https://<backend-domain>/api/health` returns `ok: true`.
+- Confirm login works with seeded admin.
+- Confirm CORS allows only your production domains.
+- Enable database backups and IP restrictions if possible.
+
 ## Main API Routes
 
 ### Auth
