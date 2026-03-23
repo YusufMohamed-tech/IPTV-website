@@ -2,6 +2,9 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import http from "../api/http";
 
 const AuthContext = createContext(null);
+const disableSignIn = import.meta.env.VITE_DISABLE_SIGNIN === "true";
+const autoLoginEmail = import.meta.env.VITE_AUTO_LOGIN_EMAIL || "yusufmohamedyak55@gmail.com";
+const autoLoginPassword = import.meta.env.VITE_AUTO_LOGIN_PASSWORD || "yusuf@55555";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -19,7 +22,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const autoLogin = async () => {
+    try {
+      const { data } = await http.post("/auth/login", {
+        email: autoLoginEmail,
+        password: autoLoginPassword,
+        deviceInfo: "auto-login"
+      });
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
+    } catch (_error) {
+      localStorage.removeItem("token");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    if (disableSignIn) {
+      autoLogin();
+      return;
+    }
+
     fetchMe();
   }, []);
 
@@ -31,6 +56,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    if (disableSignIn) {
+      return;
+    }
+
     localStorage.removeItem("token");
     setUser(null);
   };

@@ -6,9 +6,11 @@ import ClientDashboard from "./pages/ClientDashboard";
 import AppLayout from "./layouts/AppLayout";
 import { ProtectedRoute, RoleRoute } from "./components/RouteGuards";
 
+const disableSignIn = import.meta.env.VITE_DISABLE_SIGNIN === "true";
+
 const App = () => (
   <Routes>
-    <Route path="/login" element={<LoginPage />} />
+    <Route path="/login" element={disableSignIn ? <Navigate to="/admin" replace /> : <LoginPage />} />
 
     <Route
       path="/admin"
@@ -49,7 +51,7 @@ const App = () => (
       }
     />
 
-    <Route path="*" element={<Navigate to="/login" replace />} />
+    <Route path="*" element={<Navigate to={disableSignIn ? "/admin" : "/login"} replace />} />
   </Routes>
 );
 
