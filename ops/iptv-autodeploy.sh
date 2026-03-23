@@ -3,7 +3,6 @@ set -euo pipefail
 
 REPO_DIR="/opt/IPTV-website"
 BRANCH="main"
-LAST_FILE="$REPO_DIR/.last_deployed_commit"
 LOG_PREFIX="[iptv-autodeploy]"
 
 cd "$REPO_DIR"
@@ -19,9 +18,8 @@ fi
 git fetch origin "$BRANCH"
 LATEST_COMMIT="$(git rev-parse "origin/$BRANCH")"
 CURRENT_COMMIT="$(git rev-parse HEAD)"
-LAST_DEPLOYED="$(cat "$LAST_FILE" 2>/dev/null || true)"
 
-if [ "$LATEST_COMMIT" = "$LAST_DEPLOYED" ]; then
+if [ "$LATEST_COMMIT" = "$CURRENT_COMMIT" ]; then
   if [ "$STASH_CREATED" = "true" ]; then
     git stash pop >/dev/null || true
   fi
@@ -43,6 +41,4 @@ docker-compose up -d backend frontend
 if [ "$STASH_CREATED" = "true" ]; then
   git stash pop >/dev/null || true
 fi
-
-echo "$LATEST_COMMIT" > "$LAST_FILE"
 echo "$LOG_PREFIX Deployed commit $LATEST_COMMIT"
